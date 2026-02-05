@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.9', '3.11', '3.12']
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Lint scripts (syntax check)
+        run: |
+          python -m py_compile scripts/generate_problems.py
+          python -m py_compile scripts/validate_solution.py
+          python -m py_compile scripts/verify_claims.py
+
+      - name: Generate test problems
+        run: |
+          python scripts/generate_problems.py ising --n 50 --seed 42
+          python scripts/generate_problems.py sat --n 50 --alpha 4.27 --seed 42
+          python scripts/generate_problems.py maxcut --n 50 --density 0.05 --seed 42
+
+      - name: Validate data files
+        run: |
+          python -c "
+          import json
+          from pathlib import Path
+
+          # Validate benchmark_claims.json structure
+          claims = json.loads(Path('data/benchmark_claims.json').read_text())
+          assert isinstance(claims, (dict, list)), 'benchmark_claims.json must be dict or list'
+          print(f'benchmark_claims.json: valid ({len(claims)} entries)')
+
+          # Validate problem_types.json structure
+          types = json.loads(Path('data/problem_types.json').read_text())
+          assert isinstance(types, (dict, list)), 'problem_types.json must be dict or list'
+          print(f'problem_types.json: valid ({len(types)} entries)')
+
+          print('All data files validated.')
+          "
