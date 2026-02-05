@@ -1,0 +1,145 @@
+{
+  "engine": {
+    "name": "Daugherty Engine",
+    "version": "3.0.0",
+    "algorithm": "Simulated Bifurcation Machine (SBM)",
+    "author": "Bryan Daugherty",
+    "organization": "Origin Neural AI",
+    "website": "https://originneural.ai",
+    "live_demo": "https://1millionspins.originneural.ai/"
+  },
+
+  "claims": [
+    {
+      "id": "SAT-001",
+      "problem_type": "3-SAT",
+      "description": "Random 3-SAT at phase transition (alpha = 4.27)",
+      "parameters": {
+        "num_vars": 1000,
+        "alpha": 4.27,
+        "num_clauses": 4270
+      },
+      "claimed_result": {
+        "metric": "satisfaction_rate",
+        "value": 0.992,
+        "unit": "fraction",
+        "display": "99.2% clause satisfaction"
+      },
+      "context": "Phase transition at alpha = 4.27 is the hardest regime for random 3-SAT. Most solvers see sharp performance degradation here.",
+      "verification": "Generate random 3-SAT instances at n=1000, alpha=4.27. Measure fraction of satisfied clauses.",
+      "status": "VERIFIED"
+    },
+    {
+      "id": "ISING-001",
+      "problem_type": "Random Ising",
+      "description": "Random dense Ising spin glass at n=1,000",
+      "parameters": {
+        "num_spins": 1000,
+        "connectivity": "full (dense)",
+        "coupling_distribution": "Gaussian"
+      },
+      "claimed_result": {
+        "metric": "energy_quality",
+        "value": "state-of-the-art",
+        "display": "Competitive with or exceeding SA, GA baselines"
+      },
+      "context": "Fully connected random Ising instances are the standard benchmark for combinatorial optimization solvers.",
+      "verification": "Generate random symmetric J matrix (Gaussian, mean 0), solve, compare energy to simulated annealing baseline.",
+      "status": "VERIFIED"
+    },
+    {
+      "id": "ISING-002",
+      "problem_type": "Random Ising",
+      "description": "Random dense Ising spin glass at n=5,000",
+      "parameters": {
+        "num_spins": 5000,
+        "connectivity": "full (dense)",
+        "coupling_distribution": "Gaussian"
+      },
+      "claimed_result": {
+        "metric": "energy_quality",
+        "value": "state-of-the-art",
+        "display": "State-of-the-art energy at full connectivity"
+      },
+      "context": "Full connectivity at n=5000 means a 5000x5000 coupling matrix -- 25 million interactions. Most quantum annealers cannot handle this density.",
+      "verification": "Generate random symmetric 5000x5000 J matrix, solve, compare to available baselines.",
+      "status": "VERIFIED"
+    },
+    {
+      "id": "MAXCUT-001",
+      "problem_type": "Max-Cut",
+      "description": "Max-Cut on random graphs at n=1,000",
+      "parameters": {
+        "num_nodes": 1000,
+        "graph_type": "Erdos-Renyi random",
+        "edge_probability": "sparse (~5 edges per node)"
+      },
+      "claimed_result": {
+        "metric": "cut_quality",
+        "value": "competitive with SOTA",
+        "display": "Competitive with state-of-the-art Max-Cut solvers"
+      },
+      "context": "Max-Cut is a canonical NP-hard graph problem with applications in circuit design and network partitioning.",
+      "verification": "Generate random sparse graph, solve Max-Cut, compare cut value to SDP relaxation bound.",
+      "status": "VERIFIED"
+    },
+    {
+      "id": "SCALE-001",
+      "problem_type": "Ising (Million-Scale)",
+      "description": "Dense Ising optimization at 1,000,000 spins",
+      "parameters": {
+        "num_spins": 1000000,
+        "connectivity": "full (dense)",
+        "hardware": "NVIDIA RTX A6000 (48GB VRAM)"
+      },
+      "claimed_result": {
+        "metric": "completion_time",
+        "value": "< 40 minutes",
+        "display": "Solved in under 40 minutes on single GPU"
+      },
+      "context": "D-Wave's quantum annealer supports 5,627 qubits with sparse Pegasus connectivity. The Daugherty Engine achieves full connectivity at 178x the variable count on a $1.57/hr GPU.",
+      "verification": "Live demo available at https://1millionspins.originneural.ai/",
+      "status": "VERIFIED"
+    }
+  ],
+
+  "comparison": {
+    "vs_dwave": {
+      "system": "D-Wave Advantage",
+      "qubits": 5627,
+      "connectivity": "Pegasus (sparse, ~15 connections per qubit)",
+      "hardware_cost": "~$15M",
+      "daugherty_engine": {
+        "variables": 1000000,
+        "connectivity": "Full (dense, N-1 connections per spin)",
+        "hardware_cost": "$1.57/hr GPU rental"
+      },
+      "notes": [
+        "D-Wave requires minor embedding for dense problems, reducing effective qubit count",
+        "Daugherty Engine runs on commodity NVIDIA GPUs with no cryogenic infrastructure",
+        "Full connectivity means no embedding overhead -- every spin talks to every other spin"
+      ]
+    }
+  },
+
+  "hardware": {
+    "primary": {
+      "name": "NVIDIA RTX A6000",
+      "vram": "48 GB",
+      "architecture": "Ampere"
+    },
+    "secondary": {
+      "name": "NVIDIA RTX 5070 Ti",
+      "vram": "17.1 GB GDDR7",
+      "architecture": "Blackwell"
+    }
+  },
+
+  "blockchain_verification": {
+    "network": "BSV (Bitcoin SV)",
+    "protocol": "B:// on-chain data publication",
+    "purpose": "Immutable timestamped proof of validation results",
+    "explorer": "https://whatsonchain.com",
+    "note": "Certification receipts contain only public information -- no trade secrets are recorded on-chain"
+  }
+}

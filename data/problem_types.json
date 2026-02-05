@@ -1,0 +1,117 @@
+{
+  "problem_types": [
+    {
+      "name": "Ising Model",
+      "class": "Native",
+      "formulation": "H = -sum_{ij} J_ij * sigma_i * sigma_j - sum_i h_i * sigma_i",
+      "variables": "sigma_i in {-1, +1}",
+      "parameters": {
+        "J": "Symmetric coupling matrix (n x n)",
+        "h": "Local field vector (n)"
+      },
+      "applications": [
+        "Spin glass physics",
+        "Magnetic systems",
+        "Statistical mechanics",
+        "Neural network training (Boltzmann machines)"
+      ],
+      "reduction": "Native -- no conversion needed",
+      "complexity": "NP-hard (ground state finding)"
+    },
+    {
+      "name": "QUBO",
+      "class": "Direct mapping",
+      "formulation": "minimize x^T Q x where x in {0, 1}^n",
+      "variables": "x_i in {0, 1}",
+      "parameters": {
+        "Q": "Upper triangular or symmetric matrix (n x n)"
+      },
+      "applications": [
+        "Portfolio optimization",
+        "Feature selection",
+        "Clustering",
+        "Set cover / partitioning"
+      ],
+      "reduction": "Standard QUBO-to-Ising: sigma = 2x - 1, J_ij = -Q_ij/4, h_i = -Q_ii/2 - sum_j Q_ij/4",
+      "complexity": "NP-hard"
+    },
+    {
+      "name": "3-SAT / k-SAT",
+      "class": "Clause-to-coupling",
+      "formulation": "Satisfy conjunction of disjunctive clauses: (l1 OR l2 OR l3) AND ...",
+      "variables": "x_i in {True, False}, literals l in {x_i, NOT x_i}",
+      "parameters": {
+        "clauses": "List of clauses in CNF format",
+        "num_vars": "Number of Boolean variables"
+      },
+      "applications": [
+        "Constraint satisfaction",
+        "Hardware verification",
+        "Cryptanalysis",
+        "Planning and scheduling"
+      ],
+      "reduction": "Each clause becomes penalty terms in the Ising Hamiltonian. Unsatisfied clauses increase energy.",
+      "complexity": "NP-complete (3-SAT). Phase transition at alpha = num_clauses/num_vars = 4.27",
+      "phase_transition": {
+        "alpha": 4.27,
+        "description": "Sharp transition from almost-always satisfiable (alpha < 4.27) to almost-never satisfiable (alpha > 4.27). Hardest instances cluster near this threshold."
+      }
+    },
+    {
+      "name": "Max-Cut",
+      "class": "Adjacency-to-Ising",
+      "formulation": "Partition graph nodes into two sets to maximize edges between sets",
+      "variables": "sigma_i in {-1, +1} (partition assignment)",
+      "parameters": {
+        "adjacency": "Graph adjacency matrix (n x n)"
+      },
+      "applications": [
+        "Network partitioning",
+        "Circuit design (VLSI layout)",
+        "Social network analysis",
+        "Image segmentation"
+      ],
+      "reduction": "Antiferromagnetic Ising: J = -A (negative adjacency). Minimizing Ising energy maximizes cut.",
+      "complexity": "NP-hard. Goemans-Williamson SDP gives 0.878-approximation."
+    },
+    {
+      "name": "TSP (via QUBO)",
+      "class": "Indirect",
+      "formulation": "Find shortest Hamiltonian cycle through n cities",
+      "variables": "x_{i,t} = 1 if city i is visited at time t",
+      "parameters": {
+        "distance_matrix": "Pairwise distances between cities (n x n)"
+      },
+      "applications": [
+        "Logistics and routing",
+        "Manufacturing (drill path optimization)",
+        "Genome sequencing"
+      ],
+      "reduction": "Convert to QUBO using one-hot encoding with penalty constraints for valid tours. Then QUBO-to-Ising.",
+      "complexity": "NP-hard"
+    },
+    {
+      "name": "Graph Coloring (via QUBO)",
+      "class": "Indirect",
+      "formulation": "Assign colors to graph nodes such that no adjacent nodes share a color",
+      "variables": "x_{i,c} = 1 if node i gets color c",
+      "parameters": {
+        "adjacency": "Graph adjacency matrix",
+        "num_colors": "Number of available colors"
+      },
+      "applications": [
+        "Register allocation (compilers)",
+        "Frequency assignment (telecommunications)",
+        "Scheduling",
+        "Map coloring"
+      ],
+      "reduction": "Convert to QUBO using one-hot encoding (exactly one color per node) with conflict penalties.",
+      "complexity": "NP-complete for k >= 3"
+    }
+  ],
+
+  "ising_universality": {
+    "description": "Any combinatorial optimization problem can be reduced to finding the ground state of an Ising Hamiltonian. This makes the Ising model a universal substrate for NP-hard optimization.",
+    "reference": "Lucas, A. (2014). Ising formulations of many NP problems. Frontiers in Physics, 2, 5."
+  }
+}

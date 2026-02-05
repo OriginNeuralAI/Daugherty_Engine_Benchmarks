@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: "Daugherty Engine: Public Benchmarks and Verification Data"
+message: "If you use this dataset, please cite it using the metadata from this file."
+type: dataset
+authors:
+  - family-names: "Daugherty"
+    given-names: "Bryan W."
+    affiliation: "Origin Neural AI"
+  - family-names: "Ward"
+    given-names: "Gregory"
+    affiliation: "Origin Neural AI"
+  - family-names: "Ryan"
+    given-names: "Shawn"
+    affiliation: "Origin Neural AI"
+repository-code: "https://github.com/OriginNeuralAI/Daugherty-Engine-Public"
+url: "https://originneural.ai"
+keywords:
+  - simulated bifurcation machine
+  - combinatorial optimization
+  - ising model
+  - gpu computing
+  - satisfiability
+  - max-cut
+  - benchmark
+license: CC-BY-4.0
+version: "1.0.0"
+date-released: "2026-02-05"
