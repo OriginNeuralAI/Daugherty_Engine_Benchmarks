@@ -50,16 +50,7 @@ Each layer gets its own hash. The **master fingerprint** is computed from all la
 
 ### Usage
 
-```bash
-# Generate trusted baseline
-python scripts/fingerprint.py compute
-
-# Verify current files match baseline
-python scripts/fingerprint.py verify
-
-# Show current fingerprint status
-python scripts/fingerprint.py status
-```
+Fingerprinting is performed internally as part of the Daugherty Engine deployment pipeline. The master fingerprint is included in every certification receipt and blockchain anchor, allowing third parties to verify that published results correspond to a specific engine build.
 
 ---
 
@@ -155,15 +146,12 @@ Anyone can verify:
 
 ## Full Certification Workflow
 
-```bash
-# Step 1: Compute fingerprint
-python scripts/fingerprint.py compute
+The end-to-end workflow runs internally within the Daugherty Engine:
 
-# Step 2: Run validation tests
-python tests/test_solvers.py
+1. **Fingerprint** -- Compute master hash of engine source
+2. **Validate** -- Run solver test suite across all problem types
+3. **Certify** -- Generate JSON receipt with pass/fail summary
+4. **Anchor** -- Publish receipt hash to BSV blockchain
+5. **Verify** -- Anyone can compare on-chain hash against a locally held receipt
 
-# Step 3: Generate + publish + display certificate
-python scripts/certification.py full
-```
-
-This generates a JSON receipt, publishes it to BSV, and displays an ASCII certificate with the blockchain transaction ID.
+The public artifacts (certification receipts and blockchain transaction IDs) are referenced in [benchmark_claims.json](../data/benchmark_claims.json).
